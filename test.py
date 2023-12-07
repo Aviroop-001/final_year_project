@@ -35,4 +35,4 @@ def upscale_image():
         return jsonify({"error": str(e)})
 
 if __name__ == '__main__':
-    app.run(threaded=True)
+    app.run(host='0.0.0.0', port=5000, threaded=True)
