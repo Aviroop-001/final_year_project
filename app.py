@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_from_directory
 import cv2
 import numpy as np
 from io import BytesIO
+import os
+from tempfile import mkdtemp
 
 app = Flask(__name__)
 
@@ -23,13 +25,12 @@ def upscale_image():
         # enhanced_image_path = "enhanced_image.png"
         # cv2.imwrite(enhanced_image_path, enhanced_image)
         # return jsonify({"message": "Image upscaled successfully", "upscaled_image_path": enhanced_image_path})
-
-        image_io = BytesIO()
-        cv2.imwrite(image_io, enhanced_image)
-        image_io.seek(0)
+        temp_dir = mkdtemp()
+        temp_file_path = os.path.join(temp_dir, 'enhanced_image.png')
+        cv2.imwrite(temp_file_path, enhanced_image)
 
         # Return the image in the response
-        return send_file(image_io, mimetype='image/png', as_attachment=True, download_name='enhanced_image.png')
+        return send_from_directory(temp_dir, 'enhanced_image.png', as_attachment=True)
 
     except Exception as e:
         return jsonify({"error": str(e)})
